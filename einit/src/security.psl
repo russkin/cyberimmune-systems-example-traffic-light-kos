@@ -254,10 +254,17 @@ request src=traffic_light.LightsGPIO dst=kl.core.Core {
     grant ()
 }
 
-
 request src=traffic_light.Diagnostics dst=kl.core.Core {
     grant ()
 }
+
+request src=traffic_light.LightsGPIO
+    dst=traffic_light.Diagnostics
+    endpoint=diagnostics.report
+    method=report {
+        grant()
+}
+
 
 /* Response messages allowed. */
 response {

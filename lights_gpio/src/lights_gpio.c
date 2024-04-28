@@ -9,6 +9,8 @@
 
 /* EDL description of the LightsGPIO entity. */
 #include <traffic_light/LightsGPIO.edl.h>
+#include <traffic_light/IReport.idl.h>
+
 
 #include <assert.h>
 
@@ -102,6 +104,33 @@ int main(void)
 
     fprintf(stderr, "Hello I'm LightsGPIO\n");
 
+    /**
+     * Get the Diagnostics IPC handle of the connection named
+     * "diagnostics_connection".
+     */
+    Handle report_handle = ServiceLocatorConnect("diagnostics_connection");
+    assert(report_handle != INVALID_HANDLE);
+
+    NkKosTransport report_transport;
+    /* Initialize IPC transport for interaction with the Diagnostics entity. */
+    NkKosTransport_Init(&report_transport, report_handle, NK_NULL, 0);
+
+    /**
+     * Get Runtime Interface ID (RIID) for interface traffic_light.IReport.report.
+     * Here mode is the name of the traffic_light.CReport component instance,
+     * traffic_light.CReport.report is the name of the IReport interface implementation.
+     */
+    nk_iid_t riid = ServiceLocatorGetRiid(report_handle, "diagnostics.report");
+    assert(riid != INVALID_RIID);
+
+    /**
+     * Initialize proxy object by specifying transport (&transport)
+     * and lights gpio interface identifier (riid). Each method of the
+     * proxy object will be implemented by sending a request to the lights gpio.
+     */
+    struct traffic_light_IReport_proxy proxy;
+    traffic_light_IReport_proxy_init(&proxy, &report_transport.base, riid);
+
     /* Dispatch loop implementation. */
     do
     {
@@ -122,6 +151,18 @@ int main(void)
              */
             traffic_light_LightsGPIO_entity_dispatch(&entity, &req.base_, &req_arena,
                                         &res.base_, &res_arena);
+
+            traffic_light_IReport_report_req report_req;
+            traffic_light_IReport_report_res report_res;
+            report_req.value = req.lightsGpio_mode.FMode.value;
+            if (traffic_light_IReport_report(&proxy.base, &report_req, NULL, &report_res, NULL) == rcOk)
+            {
+                fprintf(stderr, "[l]->[d] result = %0x\n", (int) report_res.result);
+            }
+            else
+            {
+                fprintf(stderr, "Failed to call traffic_light.IReport.repot()\n");
+            }
         }
 
         /* Send response. */
