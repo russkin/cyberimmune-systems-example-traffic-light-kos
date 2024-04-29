@@ -5,7 +5,7 @@ entities:
   connections:
   - target: traffic_light.LightsGPIO
     id: lights_gpio_connection
-@INIT_ControlSystem_ENTITY_CONNECTIONS@
+@INIT_ControlSystem_ENTITY_CONNECTIONS+@
 
 
 # The `LightsGPIO` entity can call `Diagnostics`.
@@ -13,8 +13,36 @@ entities:
   connections:
   - target: traffic_light.Diagnostics
     id: diagnostics_connection
-@INIT_LightsGPIO_ENTITY_CONNECTIONS@
+@INIT_LightsGPIO_ENTITY_CONNECTIONS+@
 
-# The `Diagnostics` entity can only respond to requests.
+# The `Diagnostics` entity can respond to requests and create TCP sockets.
 - name: traffic_light.Diagnostics
+  env:
+    VFS_FILESYSTEM_BACKEND: client:kl.VfsNet
+    VFS_NETWORK_BACKEND: client:kl.VfsNet
+  connections:
+  - target: kl.VfsNet
+    id: kl.VfsNet
 @INIT_Diagnostics_ENTITY_CONNECTIONS@
+
+# Entity "client"
+- name: client.Client
+  env:
+    VFS_FILESYSTEM_BACKEND: client:kl.VfsNet
+    VFS_NETWORK_BACKEND: client:kl.VfsNet
+  connections:
+  - target: kl.VfsNet
+    id: kl.VfsNet
+@INIT_Client_ENTITY_CONNECTIONS+@
+
+# Entity "server"
+- name: server.Server
+  env:
+    VFS_FILESYSTEM_BACKEND: client:kl.VfsNet
+    VFS_NETWORK_BACKEND: client:kl.VfsNet
+  connections:
+  - target: kl.VfsNet
+    id: kl.VfsNet
+@INIT_Server_ENTITY_CONNECTIONS+@
+
+@INIT_EXTERNAL_ENTITIES@

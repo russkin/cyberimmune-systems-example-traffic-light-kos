@@ -155,11 +155,7 @@ int main(void)
             traffic_light_IReport_report_req report_req;
             traffic_light_IReport_report_res report_res;
             report_req.value = req.lightsGpio_mode.FMode.value;
-            if (traffic_light_IReport_report(&proxy.base, &report_req, NULL, &report_res, NULL) == rcOk)
-            {
-                fprintf(stderr, "[l]->[d] result = %0x\n", (int) report_res.result);
-            }
-            else
+            if (traffic_light_IReport_report(&proxy.base, &report_req, NULL, &report_res, NULL) != rcOk)
             {
                 fprintf(stderr, "Failed to call traffic_light.IReport.repot()\n");
             }

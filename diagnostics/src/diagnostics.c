@@ -12,6 +12,8 @@
 
 #include <assert.h>
 
+int send_state(int state);
+
 /* Type of interface implementing object. */
 typedef struct IReportImpl {
     struct traffic_light_IReport base;     /* Base interface of object */
@@ -32,6 +34,7 @@ static nk_err_t Report_impl(struct traffic_light_IReport *self,
      * sent to the client in the server response.
      */
     res->result = req->value + impl->step;
+    send_state((int)req->value);
     return NK_EOK;
 }
 

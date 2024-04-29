@@ -11,6 +11,11 @@ use nk.base._
 /* Declaration of entities. */
 use EDL Einit
 use EDL kl.core.Core
+use EDL kl.VfsNet
+use EDL kl.drivers.BSP
+use EDL kl.drivers.GPIO
+use EDL client.Client
+use EDL server.Server
 
 use EDL traffic_light.ControlSystem
 use EDL traffic_light.LightsGPIO
@@ -46,198 +51,15 @@ request src=traffic_light.ControlSystem
     endpoint=lightsGpio.mode 
     method=FMode {
         assert(bool.any([
-            message.value == 0x0,
-            message.value == 0x1,
-            message.value == 0x2,
-            message.value == 0x4,
-            message.value == 0x3,
-            message.value == 0x5,
-            message.value == 0x6,
-            message.value == 0x7,
-            message.value == 0x8,
-            message.value == 0x9,
-            message.value == 0xa,
-            message.value == 0xc,
-            message.value == 0xb,
-            message.value == 0xd,
-            message.value == 0xe,
-            message.value == 0xf,
-            message.value == 0x100,
-            message.value == 0x101,
-            message.value == 0x102,
-            message.value == 0x104,
-            message.value == 0x103,
-            message.value == 0x105,
-            message.value == 0x106,
-            message.value == 0x107,
-            message.value == 0x108,
-            message.value == 0x109,
-            message.value == 0x10a,
             message.value == 0x10c,
-            message.value == 0x10b,
-            message.value == 0x10d,
-            message.value == 0x10e,
-            message.value == 0x10f,
-            message.value == 0x200,
-            message.value == 0x201,
-            message.value == 0x202,
-            message.value == 0x204,
-            message.value == 0x203,
-            message.value == 0x205,
-            message.value == 0x206,
-            message.value == 0x207,
-            message.value == 0x208,
-            message.value == 0x209,
-            message.value == 0x20a,
-            message.value == 0x20c,
-            message.value == 0x20b,
-            message.value == 0x20d,
-            message.value == 0x20e,
-            message.value == 0x20f,
-            message.value == 0x400,
-            message.value == 0x401,
-            message.value == 0x402,
-            message.value == 0x403,
-            message.value == 0x408,
-            message.value == 0x409,
-            message.value == 0x40a,
-            message.value == 0x40b,
-            message.value == 0x300,
+            message.value == 0x102,
+            message.value == 0x101,
             message.value == 0x301,
-            message.value == 0x302,
-            message.value == 0x304,
-            message.value == 0x303,
-            message.value == 0x305,
-            message.value == 0x306,
-            message.value == 0x307,
-            message.value == 0x308,
-            message.value == 0x309,
-            message.value == 0x30a,
-            message.value == 0x30c,
-            message.value == 0x30b,
-            message.value == 0x30d,
-            message.value == 0x30e,
-            message.value == 0x30f,
-            message.value == 0x500,
-            message.value == 0x501,
-            message.value == 0x502,
-            message.value == 0x503,
-            message.value == 0x508,
-            message.value == 0x509,
-            message.value == 0x50a,
-            message.value == 0x50b,
-            message.value == 0x600,
-            message.value == 0x601,
-            message.value == 0x602,
-            message.value == 0x603,
-            message.value == 0x608,
-            message.value == 0x609,
-            message.value == 0x60a,
-            message.value == 0x60b,
-            message.value == 0x700,
-            message.value == 0x701,
-            message.value == 0x702,
-            message.value == 0x703,
-            message.value == 0x708,
-            message.value == 0x709,
-            message.value == 0x70a,
-            message.value == 0x70b,
-            message.value == 0x800,
-            message.value == 0x801,
-            message.value == 0x802,
-            message.value == 0x804,
-            message.value == 0x803,
-            message.value == 0x805,
-            message.value == 0x806,
-            message.value == 0x807,
-            message.value == 0x808,
-            message.value == 0x809,
-            message.value == 0x80a,
-            message.value == 0x80c,
-            message.value == 0x80b,
-            message.value == 0x80d,
-            message.value == 0x80e,
-            message.value == 0x80f,
-            message.value == 0x900,
-            message.value == 0x901,
-            message.value == 0x902,
-            message.value == 0x904,
-            message.value == 0x903,
-            message.value == 0x905,
-            message.value == 0x906,
-            message.value == 0x907,
-            message.value == 0x908,
-            message.value == 0x909,
-            message.value == 0x90a,
-            message.value == 0x90c,
-            message.value == 0x90b,
-            message.value == 0x90d,
-            message.value == 0x90e,
-            message.value == 0x90f,
-            message.value == 0xa00,
-            message.value == 0xa01,
-            message.value == 0xa02,
-            message.value == 0xa04,
-            message.value == 0xa03,
-            message.value == 0xa05,
-            message.value == 0xa06,
-            message.value == 0xa07,
-            message.value == 0xa08,
-            message.value == 0xa09,
-            message.value == 0xa0a,
-            message.value == 0xa0c,
-            message.value == 0xa0b,
-            message.value == 0xa0d,
-            message.value == 0xa0e,
-            message.value == 0xa0f,
-            message.value == 0xc00,
+            message.value == 0x401,
             message.value == 0xc01,
-            message.value == 0xc02,
-            message.value == 0xc03,
-            message.value == 0xc08,
-            message.value == 0xc09,
-            message.value == 0xc0a,
-            message.value == 0xc0b,
-            message.value == 0xb00,
-            message.value == 0xb01,
-            message.value == 0xb02,
-            message.value == 0xb04,
-            message.value == 0xb03,
-            message.value == 0xb05,
-            message.value == 0xb06,
-            message.value == 0xb07,
-            message.value == 0xb08,
-            message.value == 0xb09,
-            message.value == 0xb0a,
-            message.value == 0xb0c,
-            message.value == 0xb0b,
-            message.value == 0xb0d,
-            message.value == 0xb0e,
-            message.value == 0xb0f,
-            message.value == 0xd00,
-            message.value == 0xd01,
-            message.value == 0xd02,
-            message.value == 0xd03,
-            message.value == 0xd08,
-            message.value == 0xd09,
-            message.value == 0xd0a,
-            message.value == 0xd0b,
-            message.value == 0xe00,
-            message.value == 0xe01,
-            message.value == 0xe02,
-            message.value == 0xe03,
-            message.value == 0xe08,
-            message.value == 0xe09,
-            message.value == 0xe0a,
-            message.value == 0xe0b,
-            message.value == 0xf00,
-            message.value == 0xf01,
-            message.value == 0xf02,
-            message.value == 0xf03,
-            message.value == 0xf08,
-            message.value == 0xf09,
-            message.value == 0xf0a,
-            message.value == 0xf0b 
+            message.value == 0x201,
+            message.value == 0x103,
+            message.value == 0x104,
         ]))
 }
 
@@ -288,3 +110,148 @@ error {
 security {
     grant ()
 }
+
+/**
+ * Allows the tasks with the Einit class to start the tasks with the kl.VfsNet class.
+ */
+execute src=Einit, dst=kl.VfsNet
+{
+    grant()
+}
+
+/**
+ * Allows the tasks with the kl.VfsNet class to send requests to the KasperskyOS kernel and get
+ * responses. This enables the VfsNet program to use core endpoints.
+ */
+request src=kl.VfsNet, dst=kl.core.Core
+{
+    grant()
+}
+
+response src=kl.core.Core, dst=kl.VfsNet
+{
+    grant()
+}
+
+/**
+ * Allows the tasks with the Einit class to start the tasks with the client.Client class.
+ */
+execute src=Einit, dst=client.Client
+{
+    grant()
+}
+
+/**
+ * Allows the tasks with the Einit class to start the tasks with the server.Server class.
+ */
+execute src=Einit, dst=server.Server
+{
+    grant()
+}
+
+request src=client.Client, dst=kl.core.Core
+{
+    grant()
+}
+
+response src=kl.core.Core, dst=client.Client
+{
+    grant()
+}
+
+/**
+ * Allows the tasks with the server.Server class to send requests to the KasperskyOS kernel and get
+ * responses. This enables the Server program to use core endpoints.
+ */
+request src=server.Server, dst=kl.core.Core
+{
+    grant()
+}
+
+response src=kl.core.Core, dst=server.Server
+{
+    grant()
+}
+
+/**
+ * Allows the tasks with the client.Client class to send requests
+ * to tasks with the kl.VfsNet class and get responses.
+ * This enables the Client program to communicate with the VfsNet program.
+ */
+request src=client.Client, dst=kl.VfsNet
+{
+    grant()
+}
+
+
+/**
+ * Allows the tasks with the server.Server class to send requests
+ * to tasks with the kl.VfsNet class and get responses.
+ * This enables the Server program to communicate with the VfsNet program.
+ */
+request src=server.Server, dst=kl.VfsNet
+{
+    grant()
+}
+
+response src=kl.VfsNet, dst=server.Server
+{
+    grant()
+}
+
+response src=kl.VfsNet, dst=client.Client
+{
+    grant()
+}
+
+
+/**
+ * Allows the tasks with the traffic_light.Diagnostics class to send requests
+ * to tasks with the kl.VfsNet class and get responses.
+ * This enables the Client program to communicate with the VfsNet program.
+ */
+request src = traffic_light.Diagnostics, dst = kl.VfsNet
+{
+    grant()
+}
+
+response src = kl.VfsNet, dst = traffic_light.Diagnostics
+{
+    grant()
+}
+
+/**
+ * Allows the tasks with the kl.drivers.BSP class to send requests to the
+ * KasperskyOS kernel and get responses. This enables the BSP driver to use
+ * core endpoints.
+ */
+request src = kl.drivers.BSP, dst = kl.core.Core
+{
+    grant()
+}
+
+response src = kl.core.Core, dst = kl.drivers.BSP
+{
+    grant()
+}
+
+execute src=Einit, dst=kl.drivers.GPIO
+{
+    grant()
+}
+
+/**
+ * Allows the tasks with the kl.drivers.GPIO class
+ * to send requests to the KasperskyOS kernel and get responses.
+ * This enables the GPIO program to use core endpoints.
+ */
+request src = kl.drivers.GPIO, dst = kl.core.Core
+{
+    grant()
+}
+
+response src = kl.core.Core, dst = kl.drivers.GPIO
+{
+    grant()
+}
+
