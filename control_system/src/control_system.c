@@ -108,7 +108,7 @@ int main(int argc, const char *argv[])
             {
                 fprintf(stderr, "Failed to call traffic_light.Mode.Mode()\n");
             }
-            sleep(tl_modes[i].delay /* / 3.0 */); // remove this string for demo
+            sleep(tl_modes[i].delay); // remove this string for demo
         }
     }
 

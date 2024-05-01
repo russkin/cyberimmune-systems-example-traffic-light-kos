@@ -19,6 +19,13 @@ include_directories (${vfs_INCLUDE})
 find_package (precompiled_vfs REQUIRED)
 include_directories (${precompiled_vfs_INCLUDE})
 
+# Add package importing components for building audit entity and connecting to it.
+find_package (klog REQUIRED)
+include_directories (${klog_INCLUDE})
+
+# Add package importing `klog_storage_entity`.
+find_package (klog_storage REQUIRED)
+include_directories (${klog_storage_INCLUDE})
 
 nk_build_idl_files (traffic_light_idl_files NK_MODULE "traffic_light" IDL "resources/IMode.idl")
 nk_build_cdl_files (traffic_light_cdl_files IDL_TARGET traffic_light_idl_files NK_MODULE "traffic_light" CDL "resources/CMode.cdl")
@@ -31,6 +38,9 @@ nk_build_edl_files (traffic_light_diagnostics_edl_files CDL_TARGET traffic_light
 
 nk_build_edl_files (client_edl_files NK_MODULE "client" EDL "${CMAKE_SOURCE_DIR}/resources/Client.edl")
 nk_build_edl_files (server_edl_files NK_MODULE "server" EDL "${CMAKE_SOURCE_DIR}/resources/Server.edl")
+
+nk_build_edl_files (klog_edl_files NK_MODULE "traffic_light" EDL "resources/KlogEntity.edl")
+nk_build_edl_files (klog_storage_edl_files NK_MODULE "traffic_light" EDL "resources/KlogStorageEntity.edl")
 
 # Recommended compiler flags against vulnerabilities.
 set(VULN_LDFLAGS "\
@@ -50,4 +60,5 @@ add_subdirectory (lights_gpio)
 add_subdirectory (diagnostics)
 add_subdirectory (server)
 add_subdirectory (client)
+add_subdirectory (klog_storage)
 add_subdirectory (einit)

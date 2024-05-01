@@ -6,7 +6,11 @@ include (platform/nk)
 # Set compiler flags.
 project_header_default ("STANDARD_GNU_11:YES" "STRICT_WARNINGS:NO")
 
-add_executable (Client "src/client.c")
+add_executable (Client
+    "src/client.c"
+    "src/gui.c"
+    "src/net.c"
+)
 add_dependencies (Client client_edl_files)
 target_link_libraries (Client ${vfs_CLIENT_LIB})
 
