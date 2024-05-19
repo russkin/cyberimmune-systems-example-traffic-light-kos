@@ -42,6 +42,8 @@ nk_build_edl_files (server_edl_files NK_MODULE "server" EDL "${CMAKE_SOURCE_DIR}
 nk_build_edl_files (klog_edl_files NK_MODULE "traffic_light" EDL "resources/KlogEntity.edl")
 nk_build_edl_files (klog_storage_edl_files NK_MODULE "traffic_light" EDL "resources/KlogStorageEntity.edl")
 
+nk_build_edl_files (echo_connector_edl_files NK_MODULE "echo" EDL "resources/edl/Connector.edl")
+
 # Recommended compiler flags against vulnerabilities.
 set(VULN_LDFLAGS "\
     -Wl,-z,noexecstack \
@@ -62,3 +64,5 @@ add_subdirectory (server)
 add_subdirectory (client)
 add_subdirectory (klog_storage)
 add_subdirectory (einit)
+add_subdirectory (connector)
+add_subdirectory (json-parser)

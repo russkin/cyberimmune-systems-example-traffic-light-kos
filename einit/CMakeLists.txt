@@ -29,6 +29,7 @@ set (ENTITIES
     Client
     Server
     KlogStorageEntity
+    Connector
 )
 
 set_target_properties (${precompiled_vfsVfsNet} PROPERTIES
