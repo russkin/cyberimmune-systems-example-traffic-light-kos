@@ -27,9 +27,16 @@
 
 ## Connector
 
-Добавлена сущность `Connector`, получающая значение текущего режима от `CentralSystem` и передающая значение в `Control`, описана соответствующая политика безопасности.
+- Добавлен режим работы светофора "мигающий желтый".
+- Добавлена сущность `Connector`, получающая значение текущего режима от `CentralSystem` каждые 15 секунд и передающая значение в `Control`, описана соответствующая политика безопасности.
+- `Control` сменяет режим после окончания цикла работы текущего режима.
+
 
 [Базовый сценарий](//www.plantuml.com/plantuml/png/hLFDYXGn4BxtKnHpMi5jy5y6HXPMN4J5XV6ubtOwp0RJIPEaH_Rchg28mY88tXJq1HfrT7Prz1MgtyXAPzfC6X4FUqYQIdtrvQilrLl6PjfMXKWijuB105zZZT_m9tvgNk89D8VDCvpZ4klc2Ixm90NyI6T715ew49vY3PIQurTA_t17WoJ9AgjaLJnaEYc9dazucKaBWmifR3DfTIR61yQoOW2PWI8pjW-yI40b9PjOfLlGXA8OSgc5MAs41rWHvo-dS6SyRdEFZ8bpLrAuowVxrkpithxVGhYA4LTJkCcpgLI6pamBoIcEGTTI63CzOrwYqRCuVPqK2axzUe52Md9cOlaiiymtv3ROlB6oO0ZudWpytZnjdkEYEMfUhJaRAbT--GziKhcZeU8FX3sbuXVkeTPA8SbPlxgxcMoZohTOunUi-rVcB9OR8ZARbYCWRmC1BgbklZuFzPxSo8qT1RlFGy7ilif7j-wfd9qBfEwLQFqXBPNWamD_r2dDX52FEnHNGsX90WSzOpBLgYe1t-2217rsOzeExCADQi9L4FsEJd-HrheRuqCFfVtOTT8ShyIlJS9AlSb7cfLAs__NprLFlfkd8NYQmD9EcTiSX4Pg20-sT_VacDcD8lQBak65VEZhEW6QcL99mmWLqmT9VL3eXCaSMYSJykpVd5n5ZnGmFSuG-WaAVuF_ETmMTxtpzwvf-TkeO0WEq3VY3Ab2w5LkaJDL8Nu3)
 
 ![Базовый сценарий](doc/flow.png)
 
+
+# Заметки
+
+- В случае запуска центрального сервера вне контейнера необходимо беспечит сетевую доступность сервиса. При запуске на хосте нужно просто заменить IP адрес в файле [connector.c](connector/src/connector.c).
