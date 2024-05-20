@@ -25,11 +25,11 @@ set (ENTITIES
     ${precompiled_vfsVfsNet}
     Diagnostics
     LightsGPIO
+    Connector
     ControlSystem
     Client
     Server
     KlogStorageEntity
-    Connector
 )
 
 set_target_properties (${precompiled_vfsVfsNet} PROPERTIES

@@ -30,7 +30,21 @@ include_directories (${klog_storage_INCLUDE})
 nk_build_idl_files (traffic_light_idl_files NK_MODULE "traffic_light" IDL "resources/IMode.idl")
 nk_build_cdl_files (traffic_light_cdl_files IDL_TARGET traffic_light_idl_files NK_MODULE "traffic_light" CDL "resources/CMode.cdl")
 nk_build_edl_files (traffic_light_lights_gpio_edl_files CDL_TARGET traffic_light_cdl_files NK_MODULE "traffic_light" EDL "resources/LightsGPIO.edl")
-nk_build_edl_files (traffic_light_control_system_edl_files NK_MODULE "traffic_light" EDL "resources/ControlSystem.edl")
+
+nk_build_edl_files (traffic_light_connector_edl_files
+    NK_MODULE "traffic_light"
+    EDL "resources/edl/Connector.edl")
+
+nk_build_idl_files (traffic_light_control_system_idl_files
+    NK_MODULE "traffic_light"
+    IDL "resources/ControlSystem.idl")
+nk_build_cdl_files (traffic_light_control_system_cdl_files
+    IDL_TARGET traffic_light_control_system_idl_files
+    NK_MODULE "traffic_light" CDL "resources/CControlSystem.cdl")
+nk_build_edl_files (traffic_light_control_system_edl_files
+    CDL_TARGET traffic_light_control_system_cdl_files
+    NK_MODULE "traffic_light"
+    EDL "resources/ControlSystem.edl")
 
 nk_build_idl_files (traffic_light_diagnostics_idl_files NK_MODULE "traffic_light" IDL "resources/IReport.idl")
 nk_build_cdl_files (traffic_light_diagnostics_cdl_files IDL_TARGET traffic_light_diagnostics_idl_files NK_MODULE "traffic_light" CDL "resources/CReport.cdl")
@@ -42,7 +56,6 @@ nk_build_edl_files (server_edl_files NK_MODULE "server" EDL "${CMAKE_SOURCE_DIR}
 nk_build_edl_files (klog_edl_files NK_MODULE "traffic_light" EDL "resources/KlogEntity.edl")
 nk_build_edl_files (klog_storage_edl_files NK_MODULE "traffic_light" EDL "resources/KlogStorageEntity.edl")
 
-nk_build_edl_files (echo_connector_edl_files NK_MODULE "echo" EDL "resources/edl/Connector.edl")
 
 # Recommended compiler flags against vulnerabilities.
 set(VULN_LDFLAGS "\
@@ -57,6 +70,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
     -Wsign-conversion -Wformat=2 -Wformat-security -Werror=format-security \
     -fsanitize=undefined -fsanitize-undefined-trap-on-error")
 
+add_subdirectory (connector)
+add_subdirectory (json-parser)
 add_subdirectory (control_system)
 add_subdirectory (lights_gpio)
 add_subdirectory (diagnostics)
@@ -64,5 +79,3 @@ add_subdirectory (server)
 add_subdirectory (client)
 add_subdirectory (klog_storage)
 add_subdirectory (einit)
-add_subdirectory (connector)
-add_subdirectory (json-parser)

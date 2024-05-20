@@ -18,6 +18,7 @@ use EDL client.Client
 use EDL server.Server
 use EDL traffic_light.KlogEntity
 use EDL traffic_light.KlogStorageEntity
+use EDL traffic_light.Connector
 
 use EDL traffic_light.ControlSystem
 use EDL traffic_light.LightsGPIO
@@ -98,6 +99,26 @@ request src=traffic_light.ControlSystem
 }
 */
 
+request src=traffic_light.Connector
+    dst=traffic_light.ControlSystem 
+    endpoint=ctrl.mode 
+    method=set {
+        assert(bool.any([
+            message.value == 0,
+            message.value == 1,
+        ]))
+}
+
+request src=traffic_light.Connector dst=kl.core.Core {
+    grant()
+}
+
+request src=traffic_light.Connector, dst=kl.VfsNet {
+    grant()
+}
+
+
+
 
 request src=traffic_light.ControlSystem 
     dst=traffic_light.LightsGPIO 
@@ -113,6 +134,8 @@ request src=traffic_light.ControlSystem
             message.value == 0x201,
             message.value == 0x103,
             message.value == 0x104,
+            message.value == 0x202,
+            message.value == 0xA0A,
         ]))
 }
 
@@ -194,6 +217,16 @@ execute src=Einit, dst=client.Client
  * Allows the tasks with the Einit class to start the tasks with the server.Server class.
  */
 execute src=Einit, dst=server.Server
+{
+    grant()
+}
+
+execute src=Einit, dst=traffic_light.Connector
+{
+    grant()
+}
+
+response src=kl.core.Core, dst=traffic_light.Connector
 {
     grant()
 }
@@ -362,4 +395,4 @@ audit profile trace = {
     },
 }
 // We assign the level of the audit profile used by default.
-audit default = trace 4
+audit default = trace 1

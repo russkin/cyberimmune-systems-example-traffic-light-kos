@@ -17,11 +17,11 @@
 #include <coresrv/sl/sl_api.h>
 
 /* Description of the server interface used by the `client` entity. */
-#include <echo/Ping.idl.h>
+#include <traffic_light/ControlSystem.idl.h>
 
 #include <assert.h>
 #include <json.h>
-#include "include/response-parser.h"
+#include <response-parser.h>
 
 #define DISCOVERING_IFACE_MAX   10
 #define TIME_STEP_SEC           5
@@ -31,8 +31,6 @@
 #define MSG_BUF_SIZE            1024
 #define MSG_CHUNK_BUF_SIZE      256
 #define SA struct sockaddr
-
-#define EXAMPLE_VALUE_TO_SEND 777
 
 static const char LogPrefix[] = "[Connector]";
 
@@ -89,10 +87,8 @@ int get_traffic_light_configuration(void)
     size_t n;
 
     snprintf(request_data, MSG_CHUNK_BUF_SIZE,
-        "GET /mode/112233 HTTP/1.1\r\n"
+        "GET /mode/1 HTTP/1.1\r\n"
         "Host: 172.20.172.221:5765\r\n\r\n"
-        // "Host-Agent: KOS\r\n"
-        // "Accept: */*\r\n"
     );
 
     request_len = strlen(request_data);
@@ -126,7 +122,7 @@ int get_traffic_light_configuration(void)
 int main(int argc, const char *argv[])
 {
     NkKosTransport transport;
-    struct echo_Ping_proxy proxy;
+    struct traffic_light_ControlSystem_proxy proxy;
     int               i;
     int               socketfd;
     struct            ifconf conf;
@@ -178,8 +174,8 @@ int main(int argc, const char *argv[])
     fprintf(stderr, "%s Network check up: OK\n", LogPrefix);
 
     /* Get the client IPC handle of the connection named
-     * "server_connection". */
-    Handle handle = ServiceLocatorConnect("server_connection");
+     * "lights_control_system_connection". */
+    Handle handle = ServiceLocatorConnect("lights_control_system_connection");
     assert(handle != INVALID_HANDLE);
 
     /* Initialize IPC transport for interaction with the server entity. */
@@ -188,42 +184,33 @@ int main(int argc, const char *argv[])
     /* Get Runtime Interface ID (RIID) for interface echo.Ping.ping.
      * Here ping is the name of the echo.Ping component instance,
      * echo.Ping.ping is the name of the Ping interface implementation. */
-    nk_iid_t riid = ServiceLocatorGetRiid(handle, "echo.Ping.ping");
+    nk_iid_t riid = ServiceLocatorGetRiid(handle, "ctrl.mode");
     assert(riid != INVALID_RIID);
 
     /* Initialize proxy object by specifying transport (&transport)
      * and server interface identifier (riid). Each method of the
      * proxy object will be implemented by sending a request to the server. */
-    echo_Ping_proxy_init(&proxy, &transport.base, riid);
+    traffic_light_ControlSystem_proxy_init(&proxy, &transport.base, riid);
 
     /* Request and response structures */
-    echo_Ping_Ping_req req;
-    echo_Ping_Ping_res res;
+    traffic_light_ControlSystem_set_req req;
+    traffic_light_ControlSystem_set_res res;
 
     /* Test loop. */
-    req.value = EXAMPLE_VALUE_TO_SEND;
+    req.value = 1;
     int rc = get_traffic_light_configuration();    
     fprintf(stderr, "%s Сonfiguration parsing status: %s\n", LogPrefix, rc == EXIT_SUCCESS ? "OK" : "FAILED");
     
-    for (i = 0; i < 10; ++i)
+    while(1)
     {
-        /* Call Ping interface method.
-         * Server will be sent a request for calling Ping interface method
-         * ping_comp.ping_impl with the value argument. Calling thread is locked
-         * until a response is received from the server. */
-        if (echo_Ping_Ping(&proxy.base, &req, NULL, &res, NULL) == rcOk)
-
+        fprintf(stderr, "%s Set mode %d\n", LogPrefix, req.value);
+        if (traffic_light_ControlSystem_set(&proxy.base, &req, NULL, &res, NULL) != rcOk)
         {
-            /* Print result value from response
-             * (result is the output argument of the Ping method). */
-            fprintf(stderr, "%s result = %d\n", LogPrefix, (int) res.result);
-            /* Include received result value into value argument
-             * to resend to server in next iteration. */
-            req.value = res.result;
-
+            fprintf(stderr, "%s Failed to call ctrl.mode.set()\n", LogPrefix);
         }
-        else
-            fprintf(stderr, "%s Failed to call echo.Ping.Ping()\n", LogPrefix);
+        req.value = (req.value + 1) % 3;
+
+        sleep(10);
     }
 
     return EXIT_SUCCESS;

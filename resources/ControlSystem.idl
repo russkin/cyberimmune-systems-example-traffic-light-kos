@@ -1,0 +1,5 @@
+package traffic_light.ControlSystem
+
+interface {
+    set(in UInt8 value, out UInt32 result);
+}
