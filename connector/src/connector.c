@@ -25,7 +25,7 @@
 
 #define DISCOVERING_IFACE_MAX   10
 #define TIME_STEP_SEC           5
-#define HOST_IP                 "10.0.2.2"
+#define HOST_IP                 "192.168.1.102"
 #define HOST_PORT               8081
 #define NUM_RETRIES             10
 #define MSG_BUF_SIZE            1024
@@ -36,7 +36,7 @@ static const char LogPrefix[] = "[Connector]";
 
 
 /* get traffic light configuration from the central server */
-int get_traffic_light_configuration(void)
+int get_traffic_light_configuration(const int modeId)
 {
     int sockfd, connfd;
     struct sockaddr_in servaddr, cli;
@@ -47,8 +47,6 @@ int get_traffic_light_configuration(void)
         fprintf(stderr, "%s DEBUG: Socket creation failed...\n\n\n", LogPrefix);
         return EXIT_FAILURE;
     }
-    else
-        fprintf(stderr, "%s DEBUG: Socket successfully created..\n\n\n", LogPrefix);
     bzero(&servaddr, sizeof(servaddr));
 
     // assign IP, PORT
@@ -74,9 +72,6 @@ int get_traffic_light_configuration(void)
     if (res != 0) {
         fprintf(stderr, "%s DEBUG: Connection with the server failed... %d\n\n\n", LogPrefix, res);
     }
-    else {
-        fprintf(stderr, "%s DEBUG: Connected to the server..\n\n\n", LogPrefix);
-    }
 
     printf("preparing request..\n");
 
@@ -87,8 +82,9 @@ int get_traffic_light_configuration(void)
     size_t n;
 
     snprintf(request_data, MSG_CHUNK_BUF_SIZE,
-        "GET /mode/1 HTTP/1.1\r\n"
-        "Host: 172.20.172.221:5765\r\n\r\n"
+        "GET /mode/%d HTTP/1.1\r\n"
+        "Host: 172.20.172.221:5765\r\n\r\n",
+        modeId
     );
 
     request_len = strlen(request_data);
@@ -195,22 +191,25 @@ int main(int argc, const char *argv[])
     /* Request and response structures */
     traffic_light_ControlSystem_set_req req;
     traffic_light_ControlSystem_set_res res;
-
-    /* Test loop. */
-    req.value = 1;
-    int rc = get_traffic_light_configuration();    
-    fprintf(stderr, "%s Сonfiguration parsing status: %s\n", LogPrefix, rc == EXIT_SUCCESS ? "OK" : "FAILED");
     
+    /* Test loop. */
+    int mode = 1;
     while(1)
     {
-        fprintf(stderr, "%s Set mode %d\n", LogPrefix, req.value);
-        if (traffic_light_ControlSystem_set(&proxy.base, &req, NULL, &res, NULL) != rcOk)
+        int rc = get_traffic_light_configuration(mode);
+        fprintf(stderr, "%s Сonfiguration parsing status: %s\n", LogPrefix, rc == EXIT_SUCCESS ? "OK" : "FAILED");
+        if (rc == EXIT_SUCCESS)
         {
-            fprintf(stderr, "%s Failed to call ctrl.mode.set()\n", LogPrefix);
-        }
-        req.value = (req.value + 1) % 3;
+            req.value = traffic_light_mode.id;
 
-        sleep(10);
+            fprintf(stderr, "%s Set mode %d\n", LogPrefix, (int)req.value);
+            if (traffic_light_ControlSystem_set(&proxy.base, &req, NULL, &res, NULL) != rcOk)
+            {
+                fprintf(stderr, "%s Failed to call ctrl.mode.set()\n", LogPrefix);
+            }
+        }
+        mode = (mode + 1) % 2;
+        sleep(15);
     }
 
     return EXIT_SUCCESS;

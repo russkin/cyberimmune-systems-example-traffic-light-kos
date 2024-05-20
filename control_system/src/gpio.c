@@ -16,7 +16,7 @@
 #define MODE_A 0
 #define MODE_B 2
 #define MODE_A_STEPS 10
-#define MODE_B_STEPS 2
+#define MODE_B_STEPS 6
 const char modes_size[] = {MODE_A_STEPS, MODE_B_STEPS};
 
 
@@ -44,12 +44,16 @@ int gpio_thread(void *context)
         {10, traffic_light_IMode_Direction2Red + traffic_light_IMode_Direction1Red},
         {3, traffic_light_IMode_Direction2Red + traffic_light_IMode_Direction1Red + traffic_light_IMode_Direction1Yellow},
 
-        // invalid states
+        // invalid states should be ignored by policy
         // {1, traffic_light_IMode_Direction1Green + traffic_light_IMode_Direction2Green},
         // {1, 0xFFFF},
     };
 
     static const struct control_state b_steps[MODE_B_STEPS] = {
+        {1, traffic_light_IMode_Direction1Yellow + traffic_light_IMode_Direction2Yellow},
+        {1, traffic_light_IMode_Direction1Yellow + traffic_light_IMode_Direction2Yellow + traffic_light_IMode_Direction1Blink + traffic_light_IMode_Direction2Blink},
+        {1, traffic_light_IMode_Direction1Yellow + traffic_light_IMode_Direction2Yellow},
+        {1, traffic_light_IMode_Direction1Yellow + traffic_light_IMode_Direction2Yellow + traffic_light_IMode_Direction1Blink + traffic_light_IMode_Direction2Blink},
         {1, traffic_light_IMode_Direction1Yellow + traffic_light_IMode_Direction2Yellow},
         {1, traffic_light_IMode_Direction1Yellow + traffic_light_IMode_Direction2Yellow + traffic_light_IMode_Direction1Blink + traffic_light_IMode_Direction2Blink},
     };
